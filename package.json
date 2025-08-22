@@ -7,6 +7,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start -p 3001",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
     "lint": "eslint",
     "electron": "cross-env KIOSK_URL=http://localhost:${PORT:-3000} concurrently \"npm run dev\" \"wait-on http://localhost:${PORT:-3000} && electron .\"",
     "dist": "npm run build && electron-builder --mac --x64 --arm64"
@@ -22,7 +24,10 @@
     ],
     "mac": {
       "category": "public.app-category.productivity",
-      "target": ["dmg", "zip"],
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "icon": "public/favicon.ico"
     }
   },
@@ -82,8 +87,12 @@
     "prettier-plugin-tailwindcss": "^0.6.14",
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.20.4",
     "typescript": "^5",
     "vitest": "^3.2.4",
     "wait-on": "^7.2.0"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }

@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Create .env for CI
+        run: |
+          echo 'DATABASE_URL="file:./prisma/ci.db"' >> .env
+          echo 'NEXT_PUBLIC_SUPPORTED_LOCALES="en,es"' >> .env
+          echo 'NEXT_PUBLIC_DEFAULT_LOCALE="en"' >> .env
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Prepare SQLite schema
+        run: npx prisma db push
+
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Build
+        run: npm run build
+
