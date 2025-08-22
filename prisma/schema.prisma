@@ -1,0 +1,145 @@
+// Prisma schema for Kiosk Assistant
+// SQLite for dev; switch to PostgreSQL in prod via env(DATABASE_URL)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  kiosks Kiosk[]
+  users  User[]
+  configs Config[]
+  tiles   Tile[]
+  workflows Workflow[]
+  recipients Recipient[]
+  auditEvents AuditEvent[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  tenantId  String
+  email     String   @unique
+  displayName String
+  role      UserRole @default(EDITOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+model Kiosk {
+  id           String   @id @default(cuid())
+  tenantId     String
+  name         String
+  site         String?
+  defaultLocale String   @default("en")
+  theme        Json?
+  publishedConfigId String?
+  pinHash      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  tiles  Tile[]
+
+  publishedConfig Config? @relation("PublishedConfig", fields: [publishedConfigId], references: [id])
+  auditEvents AuditEvent[]
+}
+
+model Config {
+  id        String   @id @default(cuid())
+  tenantId  String
+  name      String
+  note      String?
+  createdAt DateTime @default(now())
+  tiles     Tile[]
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  kiosks Kiosk[] @relation("PublishedConfig")
+}
+
+model Tile {
+  id        String   @id @default(cuid())
+  tenantId  String
+  kioskId   String?
+  configId  String?
+  order     Int
+  category  String?
+  icon      String?
+  labels    Json     // { "en": "Missed Punch", "es": "..." }
+  workflowId String
+
+  kiosk  Kiosk?  @relation(fields: [kioskId], references: [id])
+  config Config? @relation(fields: [configId], references: [id])
+  workflow Workflow @relation(fields: [workflowId], references: [id])
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+}
+
+model Workflow {
+  id        String   @id @default(cuid())
+  tenantId  String
+  name      String
+  type      WorkflowType
+  params    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  tiles  Tile[]
+}
+
+enum WorkflowType {
+  NOTIFY
+  FAQ
+  LINK
+}
+
+model Recipient {
+  id          String   @id @default(cuid())
+  tenantId    String
+  displayName String
+  type        RecipientType
+  email       String?
+  phone       String?
+  teamsId     String?
+  tags        Json?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+}
+
+enum RecipientType {
+  PERSON
+  GROUP
+}
+
+model AuditEvent {
+  id        String   @id @default(cuid())
+  tenantId  String
+  kioskId   String
+  tileId    String?
+  action    String
+  details   Json?
+  createdAt DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  kiosk  Kiosk  @relation(fields: [kioskId], references: [id])
+}
+
+
