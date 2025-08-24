@@ -1,38 +1,88 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --font-roboto: "Roboto", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-  /* Employbridge brand colors from public site */
-  --brand-primary: #0b5cab; /* deep blue */
-  --brand-secondary: #1690f2; /* bright blue */
-  --brand-surface: #f3f7fc; /* light background */
-  --brand-border: #d9e6f7;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-roboto);
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --eb-navy: #001166;
+  --eb-blue: #0033EB;
+  --eb-purple: #9933EB;
+  --eb-teal: #00EEBB;
+  --eb-light-gray: #EBEBEB;
+  --eb-medium-blue: #143672;
+  --eb-bright-blue: #3246F0;
+  --eb-sky-blue: #00b2ff;
+  --eb-gradient: linear-gradient(135deg, #001166 0%, #143672 50%, #9933EB 100%);
 }
 
 body {
-  background: var(--brand-surface);
-  color: var(--foreground);
-  font-family: var(--font-roboto);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* Prevent zooming on touch devices */
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
 }
 
-.bg-brand {
-  background-image: url('/brand/Background.png');
-  background-size: cover;
-  background-position: center;
+/* Kiosk-appropriate sizing */
+@media (max-width: 1024px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+.glass-effect {
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.touch-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0px);
+  min-height: 44px; /* Minimum touch target size */
+  min-width: 44px;
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.touch-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.4),
+    0 6px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.touch-button:active {
+  transform: translateY(0px);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.nav-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.nav-button:active {
+  transform: translateY(0px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.eb-gradient {
+  background: var(--eb-gradient);
 }

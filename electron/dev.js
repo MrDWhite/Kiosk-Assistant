@@ -1,7 +1,9 @@
 const { app, BrowserWindow } = require('electron');
+const { spawn } = require('child_process');
 const path = require('path');
-const fs = require('fs');
+const waitOn = require('wait-on');
 
+let nextProcess;
 let mainWindow;
 
 function createWindow() {
@@ -22,33 +24,11 @@ function createWindow() {
     minWidth: 800,
     minHeight: 600,
     show: false,
-    titleBarStyle: 'hidden',
-    kiosk: process.env.NODE_ENV === 'production'
+    titleBarStyle: 'hidden'
   });
   
-  const isDev = !app.isPackaged;
-  
-  if (isDev) {
-    // Development: Load from Next.js dev server
-    const startUrl = process.env.KIOSK_URL || `http://localhost:${process.env.PORT || '3001'}`;
-    mainWindow.loadURL(startUrl);
-  } else {
-    // Production: Load from Next.js static export
-    const staticPath = path.join(__dirname, '..', 'out', 'index.html');
-    
-    if (fs.existsSync(staticPath)) {
-      mainWindow.loadFile(staticPath);
-    } else {
-      // Fallback: Try .next directory
-      const indexPath = path.join(__dirname, '..', '.next', 'server', 'app', 'index.html');
-      if (fs.existsSync(indexPath)) {
-        mainWindow.loadFile(indexPath);
-      } else {
-        // Last resort: Show error
-        mainWindow.loadURL('data:text/html,<h1>Build files not found. Please rebuild the application.</h1>');
-      }
-    }
-  }
+  const startUrl = process.env.KIOSK_URL || `http://localhost:${process.env.PORT || '3001'}`;
+  mainWindow.loadURL(startUrl);
   
   // Prevent zooming
   mainWindow.webContents.setZoomFactor(1.0);
@@ -63,7 +43,21 @@ function createWindow() {
   });
 }
 
-function start() {
+async function start() {
+  const port = process.env.PORT || '3001';
+  const appDir = path.join(__dirname, '..');
+  
+  // Start Next.js dev server
+  nextProcess = spawn('npm', ['run', 'dev'], {
+    cwd: appDir,
+    env: { ...process.env, PORT: port },
+    stdio: 'inherit',
+    shell: true,
+  });
+  
+  // Wait for dev server to be ready
+  await waitOn({ resources: [`http://localhost:${port}`], timeout: 60000 });
+  
   createWindow();
 }
 
@@ -73,6 +67,6 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-// No need to manage Next.js processes in production
-
-
+app.on('before-quit', () => {
+  if (nextProcess) nextProcess.kill('SIGTERM');
+});

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { ensureI18n } from "@/lib/i18n";
 import { brandTheme } from "@/lib/brand";
 
@@ -25,7 +26,14 @@ export function BrandHeader({ titleKey = "kioskTitle", rightSlot }: Props) {
   return (
     <header className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div className="flex items-center gap-3">
-        <img src="/brand/EB Logo.png" alt={brandTheme.name} className="h-10" />
+        <Image 
+          src="/brand/EB Logo.png" 
+          alt={brandTheme.name} 
+          width={160}
+          height={40}
+          className="h-10" 
+          priority
+        />
         <h1 className="text-2xl md:text-3xl font-bold" style={{ color: brandTheme.primary }}>
           {i18n.t(titleKey) as string}
         </h1>

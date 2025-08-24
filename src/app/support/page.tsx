@@ -1,0 +1,300 @@
+"use client";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { HelpCircle, CheckCircle, Phone, Mail, Home } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import KioskLayout from "@/components/KioskLayout";
+
+export default function Support() {
+  const [formData, setFormData] = useState({
+    employee_name: "",
+    employee_id: "",
+    category: "",
+    priority: "medium",
+    subject: "",
+    description: ""
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const router = useRouter();
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // TODO: Implement actual API call to create support request
+      // await SupportRequest.create(formData);
+      
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error("Error submitting support request:", error);
+      alert("Error submitting request. Please try again.");
+    }
+    
+    setIsSubmitting(false);
+  };
+
+  if (isSubmitted) {
+    return (
+      <KioskLayout>
+        <div className="min-h-screen pb-24">
+          <div className="max-w-2xl mx-auto px-6 py-8">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center">
+                <Button 
+                  variant="ghost" 
+                  className="nav-button text-white hover:text-[#00EEBB] hover:bg-white/10 mr-4 p-3"
+                  onClick={() => router.push("/")}
+                >
+                  <HelpCircle className="w-6 h-6" />
+                </Button>
+                <h1 className="text-3xl font-bold text-white">Request Submitted</h1>
+              </div>
+              
+              <Button 
+                onClick={() => router.push("/")}
+                className="nav-button bg-[#00EEBB]/20 hover:bg-[#00EEBB]/30 text-white border border-white/20 px-4 py-2 rounded-lg flex items-center space-x-2"
+              >
+                <Home className="w-4 h-4" />
+                <span className="hidden sm:inline">Home</span>
+              </Button>
+            </div>
+
+            <Card className="glass-effect border-white/30 touch-button">
+              <CardContent className="p-8 text-center">
+                <div className="w-20 h-20 bg-gradient-to-r from-[#00EEBB] to-[#00b2ff] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <CheckCircle className="w-10 h-10 text-white" />
+                </div>
+                
+                <h2 className="text-2xl font-bold text-white mb-4">Support Request Received!</h2>
+                                  <p className="text-white/70 text-lg mb-6">
+                    Your request has been sent to the appropriate team. 
+                    You&apos;ll receive a response within 24 hours during business days.
+                  </p>
+                
+                <div className="bg-white/10 rounded-lg p-4 mb-6 touch-button">
+                  <p className="text-white/80 text-sm">
+                    <strong>Ticket ID:</strong> SUP-{Date.now().toString().slice(-6)}
+                  </p>
+                </div>
+
+                <Button 
+                  onClick={() => router.push("/")}
+                  className="nav-button bg-[#00EEBB] hover:bg-[#00b2ff] text-white px-8 py-3 text-lg"
+                >
+                  Return to Dashboard
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </KioskLayout>
+    );
+  }
+
+  return (
+    <KioskLayout>
+      <div className="min-h-screen pb-24">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          {/* Header with Navigation */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center">
+              <Button 
+                variant="ghost" 
+                className="nav-button text-white hover:text-[#00EEBB] hover:bg-white/10 mr-4 p-3"
+                onClick={() => router.push("/")}
+              >
+                <HelpCircle className="w-6 h-6" />
+              </Button>
+              <div>
+                <h1 className="text-3xl font-bold text-white">Help & Support</h1>
+                <p className="text-white/70 mt-2">Get assistance with your employment needs</p>
+              </div>
+            </div>
+            
+            <Button 
+              onClick={() => router.push("/")}
+              className="nav-button bg-[#00EEBB]/20 hover:bg-[#00EEBB]/30 text-white border border-white/20 px-4 py-2 rounded-lg flex items-center space-x-2"
+            >
+              <Home className="w-4 h-4" />
+              <span className="hidden sm:inline">Home</span>
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Support Form */}
+            <div className="lg:col-span-2">
+              <Card className="glass-effect border-white/30 touch-button">
+                <CardHeader className="border-b border-white/20">
+                  <CardTitle className="text-white flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-r from-[#00EEBB] to-[#00b2ff] rounded-lg flex items-center justify-center mr-3 shadow-md">
+                      <HelpCircle className="w-4 h-4" />
+                    </div>
+                    Submit a Support Request
+                  </CardTitle>
+                </CardHeader>
+                
+                <CardContent className="p-6">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <Label className="text-white mb-2 block">Full Name *</Label>
+                        <Input
+                          value={formData.employee_name}
+                          onChange={(e) => handleInputChange("employee_name", e.target.value)}
+                          className="bg-white/10 border-white/30 text-white placeholder-white/50"
+                          placeholder="Enter your full name"
+                          required
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label className="text-white mb-2 block">Employee ID *</Label>
+                        <Input
+                          value={formData.employee_id}
+                          onChange={(e) => handleInputChange("employee_id", e.target.value)}
+                          className="bg-white/10 border-white/30 text-white placeholder-white/50"
+                          placeholder="Enter your employee ID"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <Label className="text-white mb-2 block">Category *</Label>
+                        <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
+                          <SelectTrigger className="bg-white/10 border-white/30 text-white">
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="assignment_question">Assignment Question</SelectItem>
+                            <SelectItem value="schedule_change">Schedule Change</SelectItem>
+                            <SelectItem value="benefits">Benefits</SelectItem>
+                            <SelectItem value="payroll">Payroll</SelectItem>
+                            <SelectItem value="hr_issue">HR Issue</SelectItem>
+                            <SelectItem value="safety_concern">Safety Concern</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <Label className="text-white mb-2 block">Priority</Label>
+                        <Select value={formData.priority} onValueChange={(value) => handleInputChange("priority", value)}>
+                          <SelectTrigger className="bg-white/10 border-white/30 text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="low">Low</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="urgent">Urgent</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-white mb-2 block">Subject *</Label>
+                      <Input
+                        value={formData.subject}
+                        onChange={(e) => handleInputChange("subject", e.target.value)}
+                        className="bg-white/10 border-white/30 text-white placeholder-white/50"
+                        placeholder="Brief description of your request"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-white mb-2 block">Description *</Label>
+                      <Textarea
+                        value={formData.description}
+                        onChange={(e) => handleInputChange("description", e.target.value)}
+                        className="bg-white/10 border-white/30 text-white placeholder-white/50 min-h-32"
+                        placeholder="Please provide detailed information about your request or issue"
+                        required
+                      />
+                    </div>
+
+                    <div className="flex gap-4 pt-4">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => router.push("/")}
+                        className="flex-1 border-white/30 text-white hover:bg-white/10 nav-button"
+                      >
+                        Cancel
+                      </Button>
+                      <Button 
+                        type="submit" 
+                        disabled={isSubmitting}
+                        className="flex-1 bg-[#00EEBB] hover:bg-[#00b2ff] text-white nav-button"
+                      >
+                        {isSubmitting ? "Submitting..." : "Submit Request"}
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Contact Info */}
+            <div className="space-y-6">
+              <Card className="glass-effect border-white/30 touch-button">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-r from-[#00EEBB] to-[#00b2ff] rounded-lg flex items-center justify-center mr-3 shadow-md">
+                      <Phone className="w-4 h-4" />
+                    </div>
+                    Emergency Contact
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-white/70 space-y-3">
+                  <p className="text-lg font-semibold text-white">1-800-EMPLOY</p>
+                  <p className="text-sm">Available 24/7 for urgent issues</p>
+                </CardContent>
+              </Card>
+
+              <Card className="glass-effect border-white/30 touch-button">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-r from-[#9933EB] to-[#3246F0] rounded-lg flex items-center justify-center mr-3 shadow-md">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    General Support
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-white/70 space-y-3">
+                  <p>Monday - Friday: 8AM - 6PM</p>
+                  <p>Response time: Within 24 hours</p>
+                  <p className="text-sm">For non-urgent requests</p>
+                </CardContent>
+              </Card>
+
+              <Card className="glass-effect border-white/30 touch-button">
+                <CardContent className="p-4 text-white/70 text-sm space-y-2">
+                  <p><strong>Tip:</strong> Be specific in your description</p>
+                  <p><strong>Include:</strong> Date, time, location if relevant</p>
+                  <p><strong>Attach:</strong> Screenshots if applicable</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </KioskLayout>
+  );
+}

@@ -1,0 +1,60 @@
+{
+  "name": "TimeOffRequest",
+  "type": "object",
+  "properties": {
+    "employee_name": {
+      "type": "string",
+      "description": "Name of the employee requesting time off"
+    },
+    "employee_id": {
+      "type": "string",
+      "description": "Employee ID number"
+    },
+    "request_type": {
+      "type": "string",
+      "enum": [
+        "vacation",
+        "sick_leave",
+        "personal",
+        "bereavement",
+        "jury_duty"
+      ],
+      "description": "Type of time off requested"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Start date of time off"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "End date of time off"
+    },
+    "total_hours": {
+      "type": "number",
+      "description": "Total hours requested"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Reason for time off request"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "denied"
+      ],
+      "default": "pending",
+      "description": "Status of the request"
+    }
+  },
+  "required": [
+    "employee_name",
+    "employee_id",
+    "request_type",
+    "start_date",
+    "end_date"
+  ]
+}

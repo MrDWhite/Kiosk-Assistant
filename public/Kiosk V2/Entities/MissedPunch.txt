@@ -1,0 +1,55 @@
+{
+  "name": "MissedPunch",
+  "type": "object",
+  "properties": {
+    "employee_name": {
+      "type": "string",
+      "description": "Name of the employee"
+    },
+    "employee_id": {
+      "type": "string",
+      "description": "Employee ID number"
+    },
+    "punch_type": {
+      "type": "string",
+      "enum": [
+        "clock_in",
+        "clock_out",
+        "lunch_in",
+        "lunch_out"
+      ],
+      "description": "Type of missed punch"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of missed punch"
+    },
+    "time": {
+      "type": "string",
+      "description": "Time that should have been punched"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Reason for missing the punch"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "denied"
+      ],
+      "default": "pending",
+      "description": "Status of the request"
+    }
+  },
+  "required": [
+    "employee_name",
+    "employee_id",
+    "punch_type",
+    "date",
+    "time",
+    "reason"
+  ]
+}

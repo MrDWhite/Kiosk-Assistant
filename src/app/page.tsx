@@ -1,90 +1,160 @@
 "use client";
-import { useEffect, useState } from "react";
-import { ensureI18n } from "@/lib/i18n";
-import { brandTheme } from "@/lib/brand";
+import React from "react";
+import Image from "next/image";
+import { 
+  Clock, 
+  Calendar, 
+  Briefcase, 
+  Heart, 
+  CreditCard, 
+  HelpCircle,
+  User,
+  MapPin
+} from "lucide-react";
 
-export default function Home() {
-  const [lng, setLng] = useState<string>(
-    typeof window !== "undefined"
-      ? (document.cookie.match(/(?:^|; )locale=([^;]+)/)?.[1] ??
-          process.env.NEXT_PUBLIC_DEFAULT_LOCALE ?? "en")
-      : "en"
-  );
-  const i18n = ensureI18n(lng);
+import KioskLayout from "@/components/KioskLayout";
+import ServiceCard from "@/components/ServiceCard";
+import { Card } from "@/components/ui/card";
 
-  useEffect(() => {
-    i18n.changeLanguage(lng);
-    document.cookie = `locale=${lng}; path=/; max-age=31536000`;
-  }, [lng, i18n]);
+const services = [
+  {
+    title: "Time & Attendance",
+    description: "Report missed punches, view schedule",
+    icon: Clock,
+    page: "/time-attendance",
+    color: "from-[#0033EB] to-[#3246F0]",
+  },
+  {
+    title: "Time Off Requests",
+    description: "Submit vacation or sick leave",
+    icon: Calendar,
+    page: "/time-off",
+    color: "from-[#9933EB] to-[#00b2ff]",
+  },
+  {
+    title: "Assignment Support",
+    description: "Questions about your job",
+    icon: Briefcase,
+    page: "/assignment",
+    color: "from-[#00EEBB] to-[#00b2ff]",
+  },
+  {
+    title: "Benefits Information",
+    description: "Health, dental, retirement plans",
+    icon: Heart,
+    page: "/benefits",
+    color: "from-[#3246F0] to-[#9933EB]",
+  },
+  {
+    title: "Payroll Services",
+    description: "Direct deposit, paycards, paystubs",
+    icon: CreditCard,
+    page: "/payroll",
+    color: "from-[#00EEBB] to-[#0033EB]",
+  },
+  {
+    title: "Help & Support",
+    description: "Contact HR or get assistance",
+    icon: HelpCircle,
+    page: "/support",
+    color: "from-[#00b2ff] to-[#143672]",
+  },
+];
 
-  const tiles = [
-    { key: "missedPunch" },
-    { key: "discussAssignment" },
-    { key: "nurseTriage" },
-    { key: "benefits" },
-    { key: "newPaycard" },
-    { key: "referral" },
-    { key: "directDeposit" },
-    { key: "payStub" },
-    { key: "textOut" },
-    { key: "timeOff" },
-  ];
+export default function Dashboard() {
+  const handleServiceClick = (page: string) => {
+    window.location.href = page;
+  };
 
   return (
-    <main className="min-h-screen p-4 md:p-8 bg-brand">
-      <div className="mx-auto max-w-7xl">
-        <header className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <img src="/brand/EB Logo.png" alt={brandTheme.name} className="h-10" />
-            <h1 className="text-2xl md:text-3xl font-bold" style={{ color: brandTheme.primary }}>
-              {i18n.t("kioskTitle")}
-            </h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <label className="text-sm text-slate-600" htmlFor="lang">
-              {i18n.t("language")}
-            </label>
-            <select
-              id="lang"
-              className="border border-[var(--brand-border)] rounded-md px-3 py-2 text-sm"
-              value={lng}
-              onChange={(e) => setLng(e.target.value)}
-            >
-              {(process.env.NEXT_PUBLIC_SUPPORTED_LOCALES || "en,es")
-                .split(",")
-                .map((l) => (
-                  <option key={l} value={l}>
-                    {l === "en" ? "English" : l === "es" ? "Español" : l}
-                  </option>
-                ))}
-            </select>
-            <a href="/admin" className="text-sm hover:underline" style={{ color: brandTheme.primary }}>
-              {i18n.t("admin")}
-            </a>
-          </div>
-        </header>
+    <KioskLayout>
+      <div className="min-h-screen relative">
+        {/* Hero Section */}
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+          <div className="relative max-w-6xl mx-auto px-4 py-8">
+            <div className="text-center">
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                How Can We Support You Today?
+              </h1>
 
-        <div className="mb-5">
-          <input
-            type="search"
-            placeholder={i18n.t("search") as string}
-            className="w-full md:w-96 border border-[var(--brand-border)] rounded-xl px-4 py-3 shadow-sm"
-          />
+              {/* Center brand logos */}
+              <div className="flex justify-center mb-4">
+                <Image
+                  src="brand/ebMax_Onsite_transparent.png"
+                  alt="ebMax and On-site logos"
+                  width={360}
+                  height={90}
+                  className="h-20 w-auto"
+                  priority
+                />
+              </div>
+
+              <p className="text-lg text-[#00EEBB] font-semibold mb-6">
+                Part of the Team, Always Supported
+              </p>
+              <p className="text-base text-white/80 max-w-2xl mx-auto leading-relaxed">
+                Your digital assistant for employment services. Select a service below to get started.
+              </p>
+            </div>
+          </div>
         </div>
 
-        <section className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {tiles.map(({ key }) => (
-            <button
-              key={key}
-              className="aspect-square rounded-2xl bg-white shadow hover:shadow-lg transition flex items-center justify-center text-center p-5 text-lg font-medium hover:-translate-y-[1px]"
-              style={{ border: `1px solid ${brandTheme.border}` }}
-              aria-label={i18n.t(`tiles.${key}`) as string}
-            >
-              {i18n.t(`tiles.${key}`)}
-            </button>
-          ))}
-        </section>
+        {/* Services Grid */}
+        <div className="relative max-w-6xl mx-auto px-4 pb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {services.map((service) => (
+              <ServiceCard
+                key={service.title}
+                title={service.title}
+                description={service.description}
+                icon={service.icon}
+                color={service.color}
+                onClick={() => handleServiceClick(service.page)}
+              />
+            ))}
+          </div>
+
+          {/* Bottom Info Row */}
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="glass-effect border-white/30 p-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-[#00EEBB] to-[#00b2ff] rounded-lg flex items-center justify-center shadow-md">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h4 className="text-white font-semibold text-sm">Your Account</h4>
+                  <p className="text-white/70 text-xs">All services require employee ID verification</p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="glass-effect border-white/30 p-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-[#9933EB] to-[#3246F0] rounded-lg flex items-center justify-center shadow-md">
+                  <MapPin className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h4 className="text-white font-semibold text-sm">On-Site Support</h4>
+                  <p className="text-white/70 text-xs">Available during your shift hours</p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="glass-effect border-white/30 p-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-[#00b2ff] to-[#143672] rounded-lg flex items-center justify-center shadow-md">
+                  <HelpCircle className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h4 className="text-white font-semibold text-sm">Need Help?</h4>
+                  <p className="text-white/70 text-xs">Touch any service for step-by-step guidance</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
       </div>
-    </main>
+    </KioskLayout>
   );
 }

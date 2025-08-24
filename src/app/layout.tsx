@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { BrandProvider } from "@/components/BrandProvider";
 
-const roboto = Roboto({
-  variable: "--font-roboto",
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
-  style: ["normal", "italic"],
+  variable: "--font-inter",
+  display: "swap",
+  preload: true,
 });
 
 export const metadata: Metadata = {
   title: "Employbridge Kiosk",
-  description: "Self-service kiosk and admin portal",
+  description: "Self-service kiosk for employment services",
 };
 
 export default function RootLayout({
@@ -22,8 +21,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${roboto.variable} antialiased`}>
-        <BrandProvider>{children}</BrandProvider>
+      <body className={`${inter.variable} antialiased`}>
+        {children}
       </body>
     </html>
   );

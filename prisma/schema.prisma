@@ -12,7 +12,7 @@ datasource db {
 
 model Tenant {
   id        String   @id @default(cuid())
-  name      String
+  name      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -23,6 +23,8 @@ model Tenant {
   workflows Workflow[]
   recipients Recipient[]
   auditEvents AuditEvent[]
+
+  @@index([name])
 }
 
 model User {
@@ -35,6 +37,9 @@ model User {
   updatedAt DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@index([email])
 }
 
 enum UserRole {
@@ -60,6 +65,10 @@ model Kiosk {
 
   publishedConfig Config? @relation("PublishedConfig", fields: [publishedConfigId], references: [id])
   auditEvents AuditEvent[]
+
+  @@index([tenantId])
+  @@index([name])
+  @@index([site])
 }
 
 model Config {
@@ -127,6 +136,23 @@ model Recipient {
 enum RecipientType {
   PERSON
   GROUP
+}
+
+model MissedPunch {
+  id           String   @id @default(cuid())
+  employeeName String
+  employeeId   String
+  punchType    String
+  date         DateTime
+  time         String
+  reason       String
+  status       String   @default("pending")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([employeeId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model AuditEvent {
